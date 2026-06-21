@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useFirearmStore } from '../store/useFirearmStore';
 import { usePersonnelStore } from '../store/usePersonnelStore';
 import { Search, UserCheck, Layers, ShieldCheck, CornerDownRight } from 'lucide-react';
@@ -36,11 +36,6 @@ export function Operations() {
       f.assigneePersonnelId.includes(selectedPersonnel.badgeNumber)
     );
   }, [firearms, selectedPersonnel]);
-
-  const bulkFirearms = useMemo(() => {
-    if (statusFilter === 'All') return firearms;
-    return firearms.filter(f => f.currentStatus === statusFilter);
-  }, [firearms, statusFilter]);
 
   const handleClearCustody = (id: string) => {
     updateStatus(id, 'Available', 'Camp Crame Armory', 'Admin User');
@@ -93,9 +88,37 @@ export function Operations() {
     }
   ];
 
+  const [bulkData, setBulkData] = useState<Firearm[]>([]);
+  const [totalBulkCount, setTotalBulkCount] = useState(0);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const fetchPaginatedFirearms = useFirearmStore(state => state.fetchPaginatedFirearms);
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const result = await fetchPaginatedFirearms({
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+        status: statusFilter
+      });
+      if (active) {
+        setBulkData(result.data);
+        setTotalBulkCount(result.totalCount);
+      }
+    };
+    if (activeTab === 'bulk') {
+      load();
+    }
+    return () => { active = false; };
+  }, [fetchPaginatedFirearms, pagination, statusFilter, activeTab, firearms]);
+
+  useEffect(() => {
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, [statusFilter]);
+
   const selectedFirearmIds = useMemo(() => {
-    return Object.keys(rowSelection).map(index => bulkFirearms[parseInt(index)].id);
-  }, [rowSelection, bulkFirearms]);
+    return Object.keys(rowSelection).map(index => bulkData[parseInt(index)]?.id).filter(Boolean);
+  }, [rowSelection, bulkData]);
 
   return (
     <div className="space-y-6">
@@ -226,10 +249,14 @@ export function Operations() {
           <div className="border border-slate-100 dark:border-slate-700/50 rounded-2xl overflow-hidden">
             <DataTable 
               columns={bulkColumns} 
-              data={bulkFirearms} 
+              data={bulkData} 
               onRowClick={(row) => navigate(`/registry/${row.id}`)}
               rowSelection={rowSelection}
               setRowSelection={setRowSelection}
+              manualPagination={true}
+              pageCount={Math.ceil(totalBulkCount / pagination.pageSize)}
+              pagination={pagination}
+              onPaginationChange={setPagination}
             />
           </div>
         </div>

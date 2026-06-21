@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useFirearmStore } from '../store/useFirearmStore';
 import type { Firearm } from '../types/database';
@@ -7,12 +7,43 @@ import { RegisterFirearmSheet } from '../features/registry/RegisterFirearmSheet'
 import { Plus, Search } from 'lucide-react';
 import { calculateAge } from '../utils/date';
 import { useNavigate } from 'react-router-dom';
+import { useDebounce } from '../utils/hooks';
 
 export function FirearmRegistry() {
-  const firearms = useFirearmStore(state => state.firearms);
+  const fetchPaginatedFirearms = useFirearmStore(state => state.fetchPaginatedFirearms);
+  const firearmsList = useFirearmStore(state => state.firearms); // For re-fetching if global state changes
+  
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
+  
   const navigate = useNavigate();
+
+  const [data, setData] = useState<Firearm[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const result = await fetchPaginatedFirearms({ 
+        pageIndex: pagination.pageIndex, 
+        pageSize: pagination.pageSize, 
+        search: debouncedSearch 
+      });
+      if (active) {
+        setData(result.data);
+        setTotalCount(result.totalCount);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, [fetchPaginatedFirearms, pagination, debouncedSearch, firearmsList]);
+
+  // Reset to page 0 when search changes
+  useEffect(() => {
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, [debouncedSearch]);
 
   const columns: ColumnDef<Firearm>[] = [
     { accessorKey: 'serialNumber', header: 'Serial No.' },
@@ -42,19 +73,6 @@ export function FirearmRegistry() {
       cell: ({ row }) => <span>{row.original.assigneePersonnelId || row.original.currentLocation || 'Unknown'}</span>
     }
   ];
-
-  const filteredFirearms = React.useMemo(() => {
-    if (!search.trim()) return firearms;
-    const s = search.toLowerCase();
-    return firearms.filter(f => 
-      f.serialNumber.toLowerCase().includes(s) ||
-      f.make.toLowerCase().includes(s) ||
-      f.model.toLowerCase().includes(s) ||
-      f.caliber.toLowerCase().includes(s) ||
-      (f.assigneePersonnelId && f.assigneePersonnelId.toLowerCase().includes(s)) ||
-      (f.currentLocation && f.currentLocation.toLowerCase().includes(s))
-    );
-  }, [firearms, search]);
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-apple p-6 transition-colors">
@@ -88,14 +106,19 @@ export function FirearmRegistry() {
       <div className="border border-slate-100 dark:border-slate-700/50 rounded-2xl overflow-hidden">
         <DataTable 
           columns={columns} 
-          data={filteredFirearms} 
+          data={data} 
           onRowClick={(row) => navigate(`/registry/${row.id}`)}
+          manualPagination={true}
+          pageCount={Math.ceil(totalCount / pagination.pageSize)}
+          pagination={pagination}
+          onPaginationChange={setPagination}
         />
       </div>
 
       <RegisterFirearmSheet 
         open={isRegisterOpen} 
         onOpenChange={setIsRegisterOpen} 
-      /></div>
+      />
+    </div>
   );
 }

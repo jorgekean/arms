@@ -7,6 +7,8 @@ interface PersonnelState {
   addPersonnel: (p: Omit<Personnel, 'id'>) => void;
   updatePersonnel: (id: string, updates: Partial<Omit<Personnel, 'id'>>) => void;
   seedDataIfNeeded: () => void;
+  // API Mock
+  fetchPaginatedPersonnel: (params: { pageIndex: number; pageSize: number; search?: string }) => Promise<{ data: Personnel[]; totalCount: number }>;
 }
 
 const initialData: Personnel[] = [
@@ -19,7 +21,7 @@ const initialData: Personnel[] = [
 
 export const usePersonnelStore = create<PersonnelState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       personnel: [],
 
       addPersonnel: (p) => set((state) => {
@@ -36,7 +38,31 @@ export const usePersonnelStore = create<PersonnelState>()(
           return { personnel: initialData };
         }
         return state;
-      })
+      }),
+
+      fetchPaginatedPersonnel: async ({ pageIndex, pageSize, search }) => {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        let filtered = get().personnel;
+        
+        if (search) {
+          const s = search.toLowerCase();
+          filtered = filtered.filter(p => 
+            p.firstName.toLowerCase().includes(s) ||
+            p.lastName.toLowerCase().includes(s) ||
+            p.badgeNumber.toLowerCase().includes(s)
+          );
+        }
+        
+        const start = pageIndex * pageSize;
+        const data = filtered.slice(start, start + pageSize);
+        
+        return {
+          data,
+          totalCount: filtered.length
+        };
+      }
     }),
     {
       name: 'arms-personnel-storage',

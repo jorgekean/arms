@@ -27,6 +27,9 @@ interface FirearmState {
   updateFirearm: (id: string, updates: Partial<Omit<Firearm, 'id'>>, handledBy: string) => void;
   bulkUpdateStatus: (firearmIds: string[], status: FirearmStatus, locationOrAssignee: string, handledBy: string) => void;
   seedDataIfNeeded: () => void;
+  
+  // API Mock
+  fetchPaginatedFirearms: (params: { pageIndex: number; pageSize: number; search?: string; status?: string }) => Promise<{ data: Firearm[]; totalCount: number }>;
 }
 
 const SEED_FIREARMS: Firearm[] = [
@@ -323,6 +326,37 @@ export const useFirearmStore = create<FirearmState>()(
             }))
           });
         }
+      },
+
+      fetchPaginatedFirearms: async ({ pageIndex, pageSize, search, status }) => {
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        let filtered = get().firearms;
+
+        if (status && status !== 'All') {
+          filtered = filtered.filter(f => f.currentStatus === status);
+        }
+        
+        if (search) {
+          const s = search.toLowerCase();
+          filtered = filtered.filter(f => 
+            f.serialNumber.toLowerCase().includes(s) ||
+            f.make.toLowerCase().includes(s) ||
+            f.model.toLowerCase().includes(s) ||
+            f.caliber.toLowerCase().includes(s) ||
+            (f.assigneePersonnelId && f.assigneePersonnelId.toLowerCase().includes(s)) ||
+            (f.currentLocation && f.currentLocation.toLowerCase().includes(s))
+          );
+        }
+        
+        const start = pageIndex * pageSize;
+        const data = filtered.slice(start, start + pageSize);
+        
+        return {
+          data,
+          totalCount: filtered.length
+        };
       }
     }),
     {

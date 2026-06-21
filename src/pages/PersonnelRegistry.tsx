@@ -1,28 +1,49 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePersonnelStore } from '../store/usePersonnelStore';
 import { Users, Search, Plus } from 'lucide-react';
 import { DataTable } from '../components/ui/DataTable';
 import { EditPersonnelSheet } from '../features/personnel/EditPersonnelSheet';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Personnel } from '../types/database';
+import { useDebounce } from '../utils/hooks';
 
 export function PersonnelRegistry() {
-  const { personnel, seedDataIfNeeded, addPersonnel, updatePersonnel } = usePersonnelStore();
+  const { seedDataIfNeeded, fetchPaginatedPersonnel, personnel: personnelList } = usePersonnelStore();
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
+  
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedPersonnelId, setSelectedPersonnelId] = useState<string | null>(null);
+
+  const [data, setData] = useState<Personnel[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
   useEffect(() => {
     seedDataIfNeeded();
   }, [seedDataIfNeeded]);
 
-  const filteredPersonnel = useMemo(() => {
-    return personnel.filter(p => 
-      p.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      p.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      p.badgeNumber.toLowerCase().includes(search.toLowerCase())
-    );
-  }, [personnel, search]);
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const result = await fetchPaginatedPersonnel({
+        pageIndex: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+        search: debouncedSearch
+      });
+      if (active) {
+        setData(result.data);
+        setTotalCount(result.totalCount);
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, [fetchPaginatedPersonnel, pagination, debouncedSearch, personnelList]);
+
+  // Reset to page 0 when search changes
+  useEffect(() => {
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  }, [debouncedSearch]);
 
   const columns: ColumnDef<Personnel>[] = [
     { accessorKey: 'badgeNumber', header: 'Badge No.' },
@@ -81,8 +102,12 @@ export function PersonnelRegistry() {
         <div className="border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden">
           <DataTable 
             columns={columns} 
-            data={filteredPersonnel} 
+            data={data} 
             onRowClick={(row) => { setSelectedPersonnelId(row.id); setIsSheetOpen(true); }}
+            manualPagination={true}
+            pageCount={Math.ceil(totalCount / pagination.pageSize)}
+            pagination={pagination}
+            onPaginationChange={setPagination}
           />
         </div>
       </div>
