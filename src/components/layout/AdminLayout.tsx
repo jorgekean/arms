@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { BottomNavigation } from './BottomNavigation';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -10,10 +11,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} />
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
-        <main className="flex-1 overflow-auto p-6 md:p-10">
+        <main className="flex-1 overflow-auto p-6 md:p-10 pb-24 md:pb-10">
           {children}
         </main>
       </div>
+      <BottomNavigation />
     </div>
   );
 }

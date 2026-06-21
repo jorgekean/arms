@@ -74,7 +74,7 @@ export function FirearmDetail() {
         {/* Subtle decorative background blur */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-slate-50 dark:bg-slate-700 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-50" />
         
-        <div className="relative z-10 flex justify-between items-start mb-8">
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-4 mb-8">
           <div>
             <div className="flex items-center gap-3 mb-3">
               <h1 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{firearm.make} {firearm.model}</h1>
@@ -85,15 +85,15 @@ export function FirearmDetail() {
             <p className="text-slate-500 dark:text-slate-400 font-mono bg-slate-50 dark:bg-slate-900/50 inline-block px-3 py-1 rounded-lg border border-slate-100 dark:border-slate-700/50">SN: {firearm.serialNumber}</p>
           </div>
           
-          <div className="flex gap-3 flex-wrap justify-end">
-            <button onClick={() => setIsEditOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white rounded-xl transition-colors text-sm font-semibold cursor-pointer">
-              <Settings size={16} /> Edit Details
+          <div className="flex gap-3 flex-wrap justify-start md:justify-end w-full md:w-auto">
+            <button onClick={() => setIsEditOpen(true)} className="flex-1 md:flex-none justify-center flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white rounded-xl transition-colors text-sm font-semibold cursor-pointer whitespace-nowrap">
+              <Settings size={16} /> Edit
             </button>
-            <button onClick={() => setIsStatusOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white rounded-xl transition-colors text-sm font-semibold cursor-pointer">
-              <Edit size={16} /> Update Custody
+            <button onClick={() => setIsStatusOpen(true)} className="flex-1 md:flex-none justify-center flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white rounded-xl transition-colors text-sm font-semibold cursor-pointer whitespace-nowrap">
+              <Edit size={16} /> Custody
             </button>
-            <button onClick={() => setIsMaintenanceOpen(true)} className="flex items-center gap-2 px-4 py-2.5 bg-pnp-navy dark:bg-slate-800 hover:bg-pnp-navy-light dark:hover:bg-slate-700 text-white rounded-xl transition-colors text-sm font-semibold shadow-sm cursor-pointer">
-              <Wrench size={16} /> Log Maintenance
+            <button onClick={() => setIsMaintenanceOpen(true)} className="w-full md:w-auto justify-center flex items-center gap-2 px-4 py-2.5 bg-pnp-navy dark:bg-slate-800 hover:bg-pnp-navy-light dark:hover:bg-slate-700 text-white rounded-xl transition-colors text-sm font-semibold shadow-sm cursor-pointer whitespace-nowrap">
+              <Wrench size={16} /> Maintenance
             </button>
           </div>
         </div>

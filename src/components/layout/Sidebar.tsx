@@ -15,12 +15,15 @@ export function Sidebar({ collapsed, setCollapsed }: { collapsed: boolean, setCo
   ];
 
   return (
-    <aside className={`bg-pnp-navy dark:bg-[#060a16] text-white transition-all duration-300 flex flex-col shrink-0 ${collapsed ? 'w-20' : 'w-64'}`}>
+    <aside className={`bg-pnp-navy dark:bg-[#060a16] text-white transition-all duration-300 hidden md:flex flex-col shrink-0 ${collapsed ? 'w-20' : 'w-64'}`}>
       <div className={`h-16 flex items-center px-4 border-b border-white/10 shrink-0 ${collapsed ? 'justify-center' : 'justify-between'}`}>
         {!collapsed && (
           <div className="flex items-center gap-3 text-pnp-gold">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-9 h-9 shrink-0">
-              <path d="M4 8h16a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-3v5a2 2 0 0 1-2 2h-3a1 1 0 0 1-1-1v-6H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zm14 2h-2v2h2v-2z" />
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-9 h-9 shrink-0">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+              <circle cx="12" cy="12" r="3" />
             </svg>
             <span className="font-black text-2xl tracking-widest whitespace-nowrap overflow-hidden mt-1">ARMS</span>
           </div>

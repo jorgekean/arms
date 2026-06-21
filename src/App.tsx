@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { AdminLayout } from './components/layout/AdminLayout';
 import { Dashboard } from './pages/Dashboard';
 import { FirearmRegistry } from './pages/FirearmRegistry';
@@ -27,7 +27,7 @@ function App() {
   }, [theme]);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AdminLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -38,7 +38,7 @@ function App() {
           <Route path="/reports" element={<Reports />} />
         </Routes>
       </AdminLayout>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

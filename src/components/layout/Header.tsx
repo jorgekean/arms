@@ -1,19 +1,12 @@
 import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Bell, User } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export function Header() {
   return (
     <header className="h-16 bg-white/70 dark:bg-[#060a16]/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors">
       <div className="flex items-center gap-4 flex-1">
-        <div className="relative w-96 max-w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input 
-            type="text" 
-            placeholder="Search records, personnel..." 
-            className="w-full pl-10 pr-4 py-2 bg-slate-200/50 dark:bg-slate-800 border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-pnp-navy dark:focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-900 transition-all text-sm dark:text-white dark:placeholder:text-slate-500"
-          />
-        </div>
+        {/* Global search temporarily removed */}
       </div>
       <div className="flex items-center gap-4">
         <button className="p-2 text-slate-500 dark:text-slate-400 hover:text-pnp-navy dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative cursor-pointer">
