@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-pnp-navy: #1e3a8a;
+  --color-pnp-navy-light: #2563eb;
+  --color-pnp-gold: #f59e0b;
+  --color-pnp-gold-hover: #d97706;
+  --color-apple-bg: #f8fafc;
+  --color-apple-surface: #ffffff;
+  
+  --shadow-apple: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+:root {
+  background-color: var(--color-apple-bg);
+  color: #0f172a;
+}
+
+:root.dark {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
