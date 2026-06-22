@@ -6,7 +6,16 @@ export function Header() {
   return (
     <header className="h-16 bg-white/70 dark:bg-[#060a16]/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors">
       <div className="flex items-center gap-4 flex-1">
-        {/* Global search temporarily removed */}
+        {/* Mobile Logo */}
+        <div className="md:hidden flex items-center gap-2 text-pnp-navy dark:text-blue-400">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 shrink-0">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="M12 8v8" />
+            <path d="M8 12h8" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span className="font-black text-xl tracking-widest mt-0.5">ARMS</span>
+        </div>
       </div>
       <div className="flex items-center gap-4">
         <button className="p-2 text-slate-500 dark:text-slate-400 hover:text-pnp-navy dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors relative cursor-pointer">
